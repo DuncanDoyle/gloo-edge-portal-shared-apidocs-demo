@@ -1,0 +1,156 @@
+apiVersion: gateway.solo.io/v1
+kind: RouteTable
+metadata:
+  name: dev.petstore-product.v1
+  namespace: default
+spec:
+  routes:
+  - matchers:
+    - exact: /petstore/api/pets
+      headers:
+      - name: Host
+        value: api.example.com
+      methods:
+      - GET
+      - OPTIONS
+    name: petstore-product.default.petstore-schema.default.findPets
+    options:
+      extauth:
+        configRef:
+          name: default-petstore-product-dev
+          namespace: portal-env
+      stagedTransformations:
+        early:
+          requestTransforms:
+          - matcher:
+              prefix: /
+            requestTransformation:
+              transformationTemplate:
+                dynamicMetadataValues:
+                - key: environment
+                  value:
+                    text: dev-2.portal-env
+                - key: api_product
+                  value:
+                    text: petstore-product.default
+                passthrough: {}
+    routeAction:
+      multi:
+        destinations:
+        - destination:
+            upstream:
+              name: default-petstore-8080
+              namespace: gloo-system
+          weight: 1
+  - matchers:
+    - exact: /petstore/api/pets
+      headers:
+      - name: Host
+        value: api.example.com
+      methods:
+      - POST
+      - OPTIONS
+    name: petstore-product.default.petstore-schema.default.addPet
+    options:
+      extauth:
+        configRef:
+          name: default-petstore-product-dev
+          namespace: portal-env
+      stagedTransformations:
+        early:
+          requestTransforms:
+          - matcher:
+              prefix: /
+            requestTransformation:
+              transformationTemplate:
+                dynamicMetadataValues:
+                - key: environment
+                  value:
+                    text: dev-2.portal-env
+                - key: api_product
+                  value:
+                    text: petstore-product.default
+                passthrough: {}
+    routeAction:
+      multi:
+        destinations:
+        - destination:
+            upstream:
+              name: default-petstore-8080
+              namespace: gloo-system
+          weight: 1
+  - matchers:
+    - methods:
+      - DELETE
+      - OPTIONS
+      regex: /petstore/api/pets/[^/]+?
+      headers:
+      - name: Host
+        value: api.example.com
+    name: petstore-product.default.petstore-schema.default.deletePet
+    options:
+      extauth:
+        configRef:
+          name: default-petstore-product-dev
+          namespace: portal-env
+      stagedTransformations:
+        early:
+          requestTransforms:
+          - matcher:
+              prefix: /
+            requestTransformation:
+              transformationTemplate:
+                dynamicMetadataValues:
+                - key: environment
+                  value:
+                    text: dev-2.portal-env
+                - key: api_product
+                  value:
+                    text: petstore-product.default
+                passthrough: {}
+    routeAction:
+      multi:
+        destinations:
+        - destination:
+            upstream:
+              name: default-petstore-8080
+              namespace: gloo-system
+          weight: 1
+  - matchers:
+    - methods:
+      - GET
+      - OPTIONS
+      regex: /petstore/api/pets/[^/]+?
+      headers:
+      - name: Host
+        value: api.example.com
+    name: petstore-product.default.petstore-schema.default.findPetById
+    options:
+      extauth:
+        configRef:
+        
+          name: default-petstore-product-dev
+          namespace: portal-env
+      stagedTransformations:
+        early:
+          requestTransforms:
+          - matcher:
+              prefix: /
+            requestTransformation:
+              transformationTemplate:
+                dynamicMetadataValues:
+                - key: environment
+                  value:
+                    text: dev-2.portal-env
+                - key: api_product
+                  value:
+                    text: petstore-product.default
+                passthrough: {}
+    routeAction:
+      multi:
+        destinations:
+        - destination:
+            upstream:
+              name: default-petstore-8080
+              namespace: gloo-system
+          weight: 1

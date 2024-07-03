@@ -1,0 +1,25 @@
+apiVersion: gateway.solo.io/v1
+kind: RouteTable
+metadata:
+  name: petstore-product.v1
+  namespace: default
+spec:
+  routes:
+  - matchers:
+    - prefix: /
+      headers:
+      - name: Host
+        value: api.example.com
+    delegateAction:
+      ref:
+        name: dev.petstore-product.v1
+        namespace: default
+  - matchers:
+    - prefix: /
+      headers:
+      - name: Host
+        value: api2.example.com
+    delegateAction:
+        ref:
+          name: dev-2.petstore-product.v1
+          namespace: default
